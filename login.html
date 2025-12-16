@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Login – Bookstore</title>
+</head>
+<body>
+<h1>Login</h1>
+
+<h2>Login</h2>
+<p id="login-info">
+    Don't have an account yet? Create one below to start using our bookstore.
+</p>
+
+<form id="login-form">
+    <input type="text" id="login-username" placeholder="Username" required />
+    <input type="password" id="login-password" placeholder="Password" required />
+    <button type="submit">Log in</button>
+</form>
+
+<h2>Sign up</h2>
+<p id="register-info">
+    New here? Open your account now and enjoy reading!
+</p>
+
+<form id="register-form">
+    <input type="text" id="register-username" placeholder="Choose a username" required />
+    <input type="password" id="register-password" placeholder="Choose a password" required />
+    <button type="submit">Create account</button>
+</form>
+
+<p id="msg"></p>
+
+<p id="account-link" style="display:none;">
+    Successfully logged in!
+    <a href="myProfile.html">Go to my account</a>
+</p>
+
+<!-- Najpierw logika użytkownika (globalne funkcje) -->
+<script src="js/userData.js"></script>
+
+<!-- Skrypt strony logowania -->
+<script>
+    // REJESTRACJA
+    document.getElementById("register-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const form = document.getElementById("register-form");   // referencja do formularza
+        const username = document.getElementById("register-username").value.trim();
+        const password = document.getElementById("register-password").value;
+        const msg = document.getElementById("msg");
+        const accountLink = document.getElementById("account-link");
+
+        if (!username || !password) {
+            msg.textContent = "Please fill in both username and password.";
+            accountLink.style.display = "none";
+            return;
+        }
+
+        try {
+            // funkcja globalna z userData.js
+            registerUser(username, password);
+            msg.textContent = "Account created successfully. You can now log in.";
+            accountLink.style.display = "none";
+            form.reset(); // wyczyszczenie formularza po poprawnej rejestracji
+        } catch (err) {
+            msg.textContent = err.message || "Could not create account. Please try a different username.";
+            accountLink.style.display = "none";
+            console.error(err);
+            form.reset(); // opcjonalnie czyść także po błędzie
+        }
+    });
+
+    // LOGOWANIE
+    document.getElementById("login-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const form = document.getElementById("login-form");
+        const username = document.getElementById("login-username").value.trim();
+        const password = document.getElementById("login-password").value;
+        const msg = document.getElementById("msg");
+        const accountLink = document.getElementById("account-link");
+
+        if (!username || !password) {
+            msg.textContent = "Please enter your username and password.";
+            accountLink.style.display = "none";
+            return;
+        }
+
+        try {
+            // funkcja globalna z userData.js
+            loginUser(username, password);
+            msg.textContent = "Welcome back, " + username + "!";
+            accountLink.style.display = "block";   // pokaż link do profilu
+            form.reset(); // wyczyszczenie formularza po udanym logowaniu
+            // window.location.href = "myProfile.html"; // jeśli chcesz automatyczne przejście
+        } catch (err) {
+            msg.textContent = "No account found with this username or the password is incorrect. Please try again or create a new account below.";
+            accountLink.style.display = "none";
+            console.error(err);
+            form.reset(); // opcjonalnie czyść także po błędzie
+        }
+    });
+</script>
+</body>
+</html>

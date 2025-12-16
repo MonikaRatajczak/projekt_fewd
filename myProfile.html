@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My Account – Bookstore</title>
+</head>
+<body>
+<h1>My account</h1>
+
+<p id="hello"></p>
+<button id="logout-btn" style="display:none;">Log out</button>
+<p><a href="login.html">Back to login</a></p>
+
+<h2>Navigation</h2>
+<ul>
+    <li><a href="cart.html">Go to cart</a></li>
+    <li><a href="favorites.html">Go to favourites</a></li>
+</ul>
+
+<h2>My purchases</h2>
+<ul id="purchased-list"></ul>
+
+<h2>My loyalty points</h2>
+<p id="points"></p>
+
+<!-- Najpierw globalne funkcje użytkownika -->
+<script src="C:\Users\Dell\Documents\semestr 5\fe1\projekt\js\userData.js"></script>
+
+<!-- Skrypt strony profilu -->
+<script>
+    // pobierz referencje do elementów
+    const hello = document.getElementById("hello");
+    const purchasedList = document.getElementById("purchased-list");
+    const pointsEl = document.getElementById("points");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // funkcja globalna getCurrentUser() z userData.js
+    const user = getCurrentUser();
+
+    if (!user) {
+        // brak zalogowanego użytkownika
+        hello.textContent = "You are not logged in. Please go to the login page.";
+        pointsEl.textContent = "";
+    } else {
+        hello.textContent = "Logged in as: " + user.username;
+        logoutBtn.style.display = "inline-block";
+        renderUserData(user);
+    }
+
+    function renderUserData(user) {
+        // Kupione książki
+        purchasedList.innerHTML = "";
+        user.purchased.forEach(function (bookId) {
+            const li = document.createElement("li");
+            li.textContent = bookId + " ";
+            const btn = document.createElement("button");
+            btn.textContent = "Remove from purchased list";
+            btn.onclick = function () {
+                // funkcja globalna removeFromPurchased() z userData.js
+                removeFromPurchased(bookId);
+                location.reload();
+            };
+            li.appendChild(btn);
+            purchasedList.appendChild(li);
+        });
+
+        // Punkty
+        pointsEl.textContent = "Your points: " + user.points;
+    }
+
+    logoutBtn.addEventListener("click", function () {
+        // funkcja globalna logoutUser() z userData.js
+        logoutUser();
+        location.reload();
+    });
+</script>
+</body>
+</html>
