@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bookstore – Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAWIGACJA */
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .login-status {
+            font-size: 0.9rem;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .auth-btn:hover {
+            background-color: #764ba2;
+        }
+
+        /* GŁÓWNA ZAWARTOŚĆ */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            color: #667eea;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h2 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .book-image {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .book-title {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .book-price {
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .book-actions {
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #764ba2;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        #msg {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 6px;
+            background-color: white;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* STOPKA */
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<!-- GÓRNE MENU NAWIGACYJNE -->
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<header>
+    <h1>📚 Online Bookstore</h1>
+    <p>Discover amazing books and earn loyalty points!</p>
+</header>
+
+<main>
+    <h2>Available Books</h2>
+    <div id="books-container" class="books-grid"></div>
+    <p id="msg"></p>
+</main>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a> | <a href="about.html">About</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    // inicjalizacja
+    initBooksIfNeeded();
+
+    // elementy
+    const booksContainer = document.getElementById("books-container");
+    const msg = document.getElementById("msg");
+    const loginStatus = document.getElementById("login-status");
+    const authBtn = document.getElementById("auth-btn");
+
+    // funkcja do aktualizacji info logowania w nawigacji
+    function updateAuthStatus() {
+        const user = getCurrentUser();
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        } else {
+            loginStatus.textContent = "";
+            authBtn.textContent = "Login";
+            authBtn.onclick = function () {
+                window.location.href = "login.html";
+            };
+        }
+    }
+
+    // renderowanie książek
+    function renderBooks() {
+        booksContainer.innerHTML = "";
+        const books = loadBooks();
+
+        books.forEach(function (book) {
+            const card = document.createElement("div");
+            card.className = "book-card";
+
+            const imageEl = document.createElement("div");
+            imageEl.className = "book-image";
+            imageEl.textContent = book.image;
+
+            const titleEl = document.createElement("div");
+            titleEl.className = "book-title";
+            titleEl.textContent = book.title;
+
+            const authorEl = document.createElement("div");
+            authorEl.className = "book-author";
+            authorEl.textContent = "by " + book.author;
+
+            const priceEl = document.createElement("div");
+            priceEl.className = "book-price";
+            priceEl.textContent = book.price.toFixed(2) + " PLN";
+
+            const actionsEl = document.createElement("div");
+            actionsEl.className = "book-actions";
+
+            const addToCartBtn = document.createElement("button");
+            addToCartBtn.className = "btn-primary";
+            addToCartBtn.textContent = "Add to cart";
+            addToCartBtn.onclick = function () {
+                if (!isUserLoggedIn()) {
+                    msg.style.color = "red";
+                    msg.textContent = "Please log in to add books to your cart.";
+                    return;
+                }
+                try {
+                    addToCart(book.id);
+                    msg.style.color = "green";
+                    msg.textContent = "✓ Added \"" + book.title + "\" to your cart.";
+                } catch (err) {
+                    msg.style.color = "red";
+                    msg.textContent = err.message;
+                }
+            };
+
+            const addToFavBtn = document.createElement("button");
+            addToFavBtn.className = "btn-secondary";
+            addToFavBtn.textContent = "♥ Add to favourites";
+            addToFavBtn.onclick = function () {
+                if (!isUserLoggedIn()) {
+                    msg.style.color = "red";
+                    msg.textContent = "Please log in to add books to favourites.";
+                    return;
+                }
+                try {
+                    addToFavorites(book.id);
+                    msg.style.color = "green";
+                    msg.textContent = "✓ Added \"" + book.title + "\" to your favourites.";
+                } catch (err) {
+                    msg.style.color = "red";
+                    msg.textContent = err.message;
+                }
+            };
+
+            actionsEl.appendChild(addToCartBtn);
+            actionsEl.appendChild(addToFavBtn);
+
+            card.appendChild(imageEl);
+            card.appendChild(titleEl);
+            card.appendChild(authorEl);
+            card.appendChild(priceEl);
+            card.appendChild(actionsEl);
+
+            booksContainer.appendChild(card);
+        });
+    }
+
+    // inicjalizacja strony
+    updateAuthStatus();
+    renderBooks();
+</script>
+</body>
+</html>

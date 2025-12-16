@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Play & Earn Points – Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+        }
+
+        .not-logged {
+            color: #333;
+        }
+
+        .not-logged a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .not-logged a:hover {
+            text-decoration: underline;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            margin: 30px auto;
+            width: fit-content;
+        }
+
+        .tile {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .tile:hover {
+            transform: scale(1.05);
+        }
+
+        .tile.revealed {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .tile.matched {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .game-info {
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+
+        .points-gain {
+            color: #4CAF50;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<main>
+    <h1>🎮 Memory Game – Earn Points!</h1>
+
+    <div class="game-container">
+        <div id="not-logged-msg" style="display:none;" class="not-logged">
+            <p>You need to <a href="login.html">log in</a> to play and earn points.</p>
+        </div>
+
+        <div id="game-content" style="display:none;">
+            <h2>Match pairs and earn loyalty points!</h2>
+            <p>Find matching pairs. Each pair = 10 points.</p>
+
+            <div class="game-info">
+                <p>Points earned this round: <strong id="round-points">0</strong></p>
+                <p>Moves: <strong id="moves">0</strong></p>
+            </div>
+
+            <div class="game-board" id="game-board"></div>
+
+            <div class="points-gain">
+                Total points in account: <strong id="total-points">0</strong>
+            </div>
+
+            <button onclick="resetGame()">New Game</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    const user = getCurrentUser();
+    const notLoggedMsg = document.getElementById("not-logged-msg");
+    const gameContent = document.getElementById("game-content");
+
+    // gra memory
+    const symbols = ["📘", "📗", "📕", "📙", "📚", "📖", "📘", "📗", "📕", "📙", "📚", "📖"];
+    let tiles = [];
+    let firstTile = null;
+    let secondTile = null;
+    let moves = 0;
+    let roundPoints = 0;
+    let isLocked = false;
+
+    function updateAuthStatus() {
+        const loginStatus = document.getElementById("login-status");
+        const authBtn = document.getElementById("auth-btn");
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        }
+    }
+
+    function initGame() {
+        tiles = symbols.sort(() => Math.random() - 0.5).map((symbol, index) => ({
+            id: index,
+            symbol: symbol,
+            revealed: false,
+            matched: false
+        }));
+
+        renderBoard();
+    }
+
+    function renderBoard() {
+        const board = document.getElementById("game-board");
+        board.innerHTML = "";
+
+        tiles.forEach(tile => {
+            const btn = document.createElement("button");
+            btn.className = "tile";
+            btn.textContent = tile.revealed || tile.matched ? tile.symbol : "?";
+            if (tile.matched) btn.className += " matched";
+            if (tile.revealed && !tile.matched) btn.className += " revealed";
+            btn.onclick = () => revealTile(tile);
+            board.appendChild(btn);
+        });
+    }
+
+    function revealTile(tile) {
+        if (isLocked || tile.revealed || tile.matched) return;
+
+        tile.revealed = true;
+        renderBoard();
+
+        if (!firstTile) {
+            firstTile = tile;
+        } else {
+            secondTile = tile;
+            moves++;
+            document.getElementById("moves").textContent = moves;
+            isLocked = true;
+
+            setTimeout(() => {
+                if (firstTile.symbol === secondTile.symbol) {
+                    firstTile.matched = true;
+                    secondTile.matched = true;
+                    roundPoints += 10;
+                    document.getElementById("round-points").textContent = roundPoints;
+                } else {
+                    firstTile.revealed = false;
+                    secondTile.revealed = false;
+                }
+
+                renderBoard();
+                firstTile = null;
+                secondTile = null;
+                isLocked = false;
+
+                // sprawdź czy gra się skończyła
+                if (tiles.every(t => t.matched)) {
+                    setTimeout(() => {
+                        addPoints(roundPoints);
+                        alert("🎉 You won! You earned " + roundPoints + " points!");
+                        location.reload();
+                    }, 500);
+                }
+            }, 600);
+        }
+    }
+
+    function resetGame() {
+        moves = 0;
+        roundPoints = 0;
+        firstTile = null;
+        secondTile = null;
+        isLocked = false;
+        document.getElementById("moves").textContent = moves;
+        document.getElementById("round-points").textContent = roundPoints;
+        initGame();
+    }
+
+    if (!user) {
+        notLoggedMsg.style.display = "block";
+    } else {
+        gameContent.style.display = "block";
+        document.getElementById("total-points").textContent = user.points;
+        initGame();
+    }
+
+    updateAuthStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cart – Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .cart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .not-logged {
+            text-align: center;
+        }
+
+        .not-logged a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .not-logged a:hover {
+            text-decoration: underline;
+        }
+
+        .cart-items {
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: 6px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .item-author {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .item-price {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 20px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .summary {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.3rem;
+            border-top: 2px solid #667eea;
+            padding-top: 10px;
+        }
+
+        .points-section {
+            background: #e8f4f8;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .points-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .points-input input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            flex: 1;
+            max-width: 150px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<main>
+    <h1>🛒 Shopping Cart</h1>
+
+    <div class="cart-container">
+        <div id="not-logged-msg" style="display:none;" class="not-logged">
+            <p>You need to <a href="login.html">log in</a> to view your cart.</p>
+        </div>
+
+        <div id="logged-content" style="display:none;">
+            <div id="empty-msg" class="empty-message" style="display:none;">
+                <p>Your cart is empty. <a href="index.html" style="color:#667eea;">Continue shopping</a></p>
+            </div>
+
+            <div id="cart-content">
+                <div class="cart-items" id="cart-items-list"></div>
+
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">0.00 PLN</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount (points):</span>
+                        <span id="discount">0.00 PLN</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="total">0.00 PLN</span>
+                    </div>
+                </div>
+
+                <div class="points-section">
+                    <h3>Use Loyalty Points for Discount</h3>
+                    <p>You have <strong id="available-points">0</strong> points. Every 100 points = 10 PLN discount.</p>
+                    <div class="points-input">
+                        <input type="number" id="points-to-use" placeholder="Points to use" min="0" />
+                        <button onclick="applyPointsDiscount()">Apply Discount</button>
+                    </div>
+                    <p id="points-msg" style="margin-top:10px; color:#666;"></p>
+                </div>
+
+                <button onclick="checkout()" style="width:100%; padding:15px; font-size:1.1rem; margin-bottom:10px;">Complete Purchase</button>
+                <button class="btn-danger" onclick="clearCart(); location.reload();" style="width:100%; padding:15px; font-size:1.1rem;">Clear Cart</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    const user = getCurrentUser();
+    const notLoggedMsg = document.getElementById("not-logged-msg");
+    const loggedContent = document.getElementById("logged-content");
+    const cartItemsList = document.getElementById("cart-items-list");
+    const emptyMsg = document.getElementById("empty-msg");
+    const cartContent = document.getElementById("cart-content");
+
+    let pointsUsed = 0; // punkty użyte na rabat
+
+    function updateAuthStatus() {
+        const loginStatus = document.getElementById("login-status");
+        const authBtn = document.getElementById("auth-btn");
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        }
+    }
+
+    function renderCart() {
+        const cart = getCart();
+
+        if (cart.length === 0) {
+            emptyMsg.style.display = "block";
+            cartContent.style.display = "none";
+            return;
+        }
+
+        emptyMsg.style.display = "none";
+        cartContent.style.display = "block";
+        cartItemsList.innerHTML = "";
+
+        let subtotal = 0;
+
+        cart.forEach(function (bookId) {
+            const book = getBookById(bookId);
+            if (book) {
+                subtotal += book.price;
+
+                const item = document.createElement("div");
+                item.className = "cart-item";
+                item.innerHTML = `
+                <div class="item-info">
+                    <div class="item-title">${book.image} ${book.title}</div>
+                    <div class="item-author">by ${book.author}</div>
+                </div>
+                <div class="item-price">${book.price.toFixed(2)} PLN</div>
+                <button class="btn-danger" onclick="removeFromCart('${bookId}'); location.reload();">Remove</button>
+            `;
+                cartItemsList.appendChild(item);
+            }
+        });
+
+        // aktualizuj sumę
+        const discount = (pointsUsed / 100) * 10;
+        const total = subtotal - discount;
+
+        document.getElementById("subtotal").textContent = subtotal.toFixed(2) + " PLN";
+        document.getElementById("discount").textContent = discount.toFixed(2) + " PLN";
+        document.getElementById("total").textContent = total.toFixed(2) + " PLN";
+        document.getElementById("available-points").textContent = user.points;
+    }
+
+    function applyPointsDiscount() {
+        const pointsInput = document.getElementById("points-to-use").value;
+        const pointsMsg = document.getElementById("points-msg");
+
+        if (!pointsInput || parseInt(pointsInput) <= 0) {
+            pointsMsg.textContent = "Please enter a valid number of points.";
+            pointsMsg.style.color = "red";
+            return;
+        }
+
+        if (parseInt(pointsInput) > user.points) {
+            pointsMsg.textContent = "You don't have enough points!";
+            pointsMsg.style.color = "red";
+            return;
+        }
+
+        pointsUsed = parseInt(pointsInput);
+        pointsMsg.textContent = "✓ Discount applied! You'll save " + ((pointsUsed / 100) * 10).toFixed(2) + " PLN.";
+        pointsMsg.style.color = "green";
+        renderCart();
+    }
+
+    function checkout() {
+        const cart = getCart();
+        if (cart.length === 0) {
+            alert("Your cart is empty!");
+            return;
+        }
+
+        if (!user.shippingData) {
+            alert("Please add your shipping data on your account page before checkout.");
+            window.location.href = "myProfile.html";
+            return;
+        }
+
+        // dodaj wszystkie książki do purchased
+        cart.forEach(function (bookId) {
+            addToPurchased(bookId);
+        });
+
+        // dodaj punkty za kupno (1 punkt za każdy PLN)
+        const cartTotal = getCartTotal();
+        addPoints(Math.floor(cartTotal));
+
+        // użyj punktów na rabat
+        if (pointsUsed > 0) {
+            usePoints(pointsUsed);
+        }
+
+        // wyczyść koszyk
+        clearCart();
+
+        alert("✓ Purchase completed! Your books are now in your library.");
+        window.location.href = "myProfile.html";
+    }
+
+    function getCartTotal() {
+        const cart = getCart();
+        let total = 0;
+        cart.forEach(function (bookId) {
+            const book = getBookById(bookId);
+            if (book) total += book.price;
+        });
+        const discount = (pointsUsed / 100) * 10;
+        return total - discount;
+    }
+
+    if (!user) {
+        notLoggedMsg.style.display = "block";
+    } else {
+        loggedContent.style.display = "block";
+        renderCart();
+    }
+
+    updateAuthStatus();
+</script>
+</body>
+</html>

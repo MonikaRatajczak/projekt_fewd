@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>About Us – Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .about-container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            line-height: 1.6;
+            color: #333;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        ul {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<main>
+    <h1>📚 About Our Bookstore</h1>
+
+    <div class="about-container">
+        <h2>Welcome to Online Bookstore</h2>
+        <p>We are a modern online bookstore dedicated to bringing the world of literature to your fingertips. Founded with a passion for reading and learning, we offer a curated selection of books across all genres.</p>
+
+        <h2>Our Mission</h2>
+        <p>Our mission is to make reading more accessible, affordable, and rewarding. We believe that every book has the power to change lives, and we're here to help you discover your next favorite read.</p>
+
+        <h2>Why Choose Us?</h2>
+        <ul>
+            <li>📖 Carefully selected books from around the world</li>
+            <li>💳 Secure and easy checkout process</li>
+            <li>⭐ Loyalty Points program – earn points with every purchase</li>
+            <li>🎮 Interactive games to earn bonus points</li>
+            <li>♥ Save your favourite books for later</li>
+            <li>🚚 Fast and reliable shipping</li>
+        </ul>
+
+        <h2>Loyalty Program</h2>
+        <p>Our customers earn loyalty points with every purchase! Every 1 PLN spent = 1 point. Collect 100 points to get a 10 PLN discount on your next order. You can also earn bonus points by playing our memory game.</p>
+
+        <h2>Contact Us</h2>
+        <p>Have questions or need help? Feel free to reach out to us:</p>
+        <ul>
+            <li>Email: support@bookstore.com</li>
+            <li>Phone: +48 123 456 789</li>
+            <li>Hours: Monday-Friday 9 AM - 6 PM</li>
+        </ul>
+
+        <h2>Thank You!</h2>
+        <p>We appreciate your business and look forward to helping you find your next great read. Happy reading! 📚</p>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    const user = getCurrentUser();
+
+    function updateAuthStatus() {
+        const loginStatus = document.getElementById("login-status");
+        const authBtn = document.getElementById("auth-btn");
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        } else {
+            loginStatus.textContent = "";
+            authBtn.textContent = "Login";
+            authBtn.onclick = function () {
+                window.location.href = "login.html";
+            };
+        }
+    }
+
+    updateAuthStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Favourites – Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .favorites-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .not-logged {
+            text-align: center;
+        }
+
+        .not-logged a {
+            color: #667eea;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .not-logged a:hover {
+            text-decoration: underline;
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .favorite-card {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .book-image {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .book-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .book-author {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .book-price {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin: 4px;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<main>
+    <h1>♥ My Favourites</h1>
+
+    <div class="favorites-container">
+        <div id="not-logged-msg" style="display:none;" class="not-logged">
+            <p>You need to <a href="login.html">log in</a> to view your favourites.</p>
+        </div>
+
+        <div id="logged-content" style="display:none;">
+            <div id="empty-msg" class="empty-message" style="display:none;">
+                <p>You haven't added any favourite books yet. <a href="index.html" style="color:#667eea;">Browse our store</a></p>
+            </div>
+
+            <div id="favorites-grid" class="favorites-grid"></div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    const user = getCurrentUser();
+    const notLoggedMsg = document.getElementById("not-logged-msg");
+    const loggedContent = document.getElementById("logged-content");
+    const favoritesGrid = document.getElementById("favorites-grid");
+    const emptyMsg = document.getElementById("empty-msg");
+
+    function updateAuthStatus() {
+        const loginStatus = document.getElementById("login-status");
+        const authBtn = document.getElementById("auth-btn");
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        }
+    }
+
+    function renderFavorites() {
+        const favorites = getFavorites();
+
+        if (favorites.length === 0) {
+            emptyMsg.style.display = "block";
+            favoritesGrid.style.display = "none";
+            return;
+        }
+
+        emptyMsg.style.display = "none";
+        favoritesGrid.style.display = "grid";
+        favoritesGrid.innerHTML = "";
+
+        favorites.forEach(function (bookId) {
+            const book = getBookById(bookId);
+            if (book) {
+                const card = document.createElement("div");
+                card.className = "favorite-card";
+                card.innerHTML = `
+                <div class="book-image">${book.image}</div>
+                <div class="book-title">${book.title}</div>
+                <div class="book-author">by ${book.author}</div>
+                <div class="book-price">${book.price.toFixed(2)} PLN</div>
+                <button onclick="addToCart('${bookId}'); alert('Added to cart!');">Add to cart</button>
+                <button class="btn-danger" onclick="removeFromFavorites('${bookId}'); location.reload();">Remove</button>
+            `;
+                favoritesGrid.appendChild(card);
+            }
+        });
+    }
+
+    if (!user) {
+        notLoggedMsg.style.display = "block";
+    } else {
+        loggedContent.style.display = "block";
+        renderFavorites();
+    }
+
+    updateAuthStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My Account – Bookstore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 12px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #667eea;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-btn {
+            background-color: #667eea;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        main {
+            flex: 1;
+            padding: 40px 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-value {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .points-display {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        li {
+            background: #f9f9f9;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #764ba2;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-left">
+        <a href="index.html"><strong>Store</strong></a>
+        <a href="about.html">About us</a>
+        <a href="game.html">Play & Earn Points</a>
+    </div>
+    <div class="nav-right">
+        <a href="cart.html">🛒 Cart</a>
+        <a href="favorites.html">♥ Favourites</a>
+        <span id="login-status" class="login-status"></span>
+        <span id="auth-btn" class="auth-btn"></span>
+    </div>
+</nav>
+
+<main>
+    <div id="not-logged" style="display:none;">
+        <h1 style="color:white;">You are not logged in</h1>
+        <div class="profile-card">
+            <p>Please <a href="login.html">log in</a> to view your account.</p>
+        </div>
+    </div>
+
+    <div id="logged-in" style="display:none;">
+        <h1>My Account</h1>
+
+        <div class="profile-card">
+            <h2>Profile Information</h2>
+            <div class="info-box">
+                <div class="info-label">Username:</div>
+                <div class="info-value" id="username-display"></div>
+            </div>
+
+            <h2>Loyalty Points</h2>
+            <div class="info-box">
+                <div class="points-display" id="points-display">0 points</div>
+                <p>Earn points with every purchase! Use them for discounts.</p>
+            </div>
+
+            <h2>Shipping Information</h2>
+            <div id="shipping-info-display"></div>
+            <button onclick="openShippingModal()">Edit Shipping Data</button>
+
+            <h2>My Purchases</h2>
+            <ul id="purchased-list"></ul>
+
+            <button class="btn-danger" onclick="logoutUser(); location.reload();">Logout</button>
+        </div>
+    </div>
+</main>
+
+<!-- MODAL DO EDYCJI DANYCH WYSYŁKI -->
+<div id="shipping-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="background:white; padding:30px; border-radius:10px; max-width:400px; margin:50px auto; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        <h2 style="margin-bottom:20px; color:#667eea;">Edit Shipping Data</h2>
+        <form id="shipping-form">
+            <input type="text" id="ship-name" placeholder="Full Name" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;" />
+            <input type="text" id="ship-address" placeholder="Street Address" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;" />
+            <input type="text" id="ship-city" placeholder="City" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;" />
+            <input type="text" id="ship-zipcode" placeholder="Zip Code" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;" />
+            <input type="tel" id="ship-phone" placeholder="Phone Number" required style="width:100%; padding:10px; margin-bottom:20px; border:1px solid #ddd; border-radius:6px;" />
+            <button type="submit" style="width:100%; padding:12px; background-color:#667eea; color:white; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Save</button>
+            <button type="button" onclick="closeShippingModal()" style="width:100%; margin-top:10px; padding:12px; background-color:#ddd; color:#333; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a></p>
+</footer>
+
+<script src="js/userData.js"></script>
+<script>
+    const notLogged = document.getElementById("not-logged");
+    const loggedIn = document.getElementById("logged-in");
+    const user = getCurrentUser();
+
+    function updateAuthStatus() {
+        const loginStatus = document.getElementById("login-status");
+        const authBtn = document.getElementById("auth-btn");
+        if (user) {
+            loginStatus.textContent = "Logged in as: " + user.username;
+            authBtn.textContent = "Logout";
+            authBtn.onclick = function () {
+                logoutUser();
+                location.reload();
+            };
+        }
+    }
+
+    if (!user) {
+        notLogged.style.display = "block";
+    } else {
+        loggedIn.style.display = "block";
+        document.getElementById("username-display").textContent = user.username;
+        document.getElementById("points-display").textContent = user.points + " points";
+
+        // wyświetl dane wysyłki
+        if (user.shippingData) {
+            const shipDisplay = document.getElementById("shipping-info-display");
+            shipDisplay.innerHTML = `
+            <div class="info-box">
+                <div class="info-label">Name:</div>
+                <div class="info-value">${user.shippingData.name}</div>
+                <div class="info-label">Address:</div>
+                <div class="info-value">${user.shippingData.address}</div>
+                <div class="info-label">City:</div>
+                <div class="info-value">${user.shippingData.city}</div>
+                <div class="info-label">Zip Code:</div>
+                <div class="info-value">${user.shippingData.zipcode}</div>
+                <div class="info-label">Phone:</div>
+                <div class="info-value">${user.shippingData.phone}</div>
+            </div>
+        `;
+        } else {
+            document.getElementById("shipping-info-display").innerHTML = `
+            <div class="info-box" style="color:#999;">No shipping data saved yet.</div>
+        `;
+        }
+
+        // wyświetl kupione książki
+        const purchasedList = document.getElementById("purchased-list");
+        if (user.purchased.length === 0) {
+            purchasedList.innerHTML = "<li style='text-align:center; color:#999;'>No purchases yet.</li>";
+        } else {
+            purchasedList.innerHTML = "";
+            user.purchased.forEach(function (bookId) {
+                const book = getBookById(bookId);
+                if (book) {
+                    const li = document.createElement("li");
+                    li.innerHTML = `
+                    <span>${book.image} ${book.title} by ${book.author}</span>
+                    <button class="btn-danger" onclick="removeFromPurchased('${bookId}'); location.reload();">Remove</button>
+                `;
+                    purchasedList.appendChild(li);
+                }
+            });
+        }
+    }
+
+    updateAuthStatus();
+
+    // MODAL LOGIKA
+    function openShippingModal() {
+        const modal = document.getElementById("shipping-modal");
+        modal.style.display = "flex";
+        modal.style.justifyContent = "center";
+
+        if (user && user.shippingData) {
+            document.getElementById("ship-name").value = user.shippingData.name;
+            document.getElementById("ship-address").value = user.shippingData.address;
+            document.getElementById("ship-city").value = user.shippingData.city;
+            document.getElementById("ship-zipcode").value = user.shippingData.zipcode;
+            document.getElementById("ship-phone").value = user.shippingData.phone;
+        }
+    }
+
+    function closeShippingModal() {
+        document.getElementById("shipping-modal").style.display = "none";
+    }
+
+    document.getElementById("shipping-form").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const data = {
+            name: document.getElementById("ship-name").value,
+            address: document.getElementById("ship-address").value,
+            city: document.getElementById("ship-city").value,
+            zipcode: document.getElementById("ship-zipcode").value,
+            phone: document.getElementById("ship-phone").value
+        };
+        saveShippingData(data);
+        closeShippingModal();
+        location.reload();
+    });
+</script>
+</body>
+</html>
