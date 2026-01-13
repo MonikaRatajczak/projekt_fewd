@@ -102,10 +102,13 @@
 
         .books-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+            width: 100%;          /* ⬅️ KLUCZ */
+            max-width: 1200px;    /* ⬅️ JAK STRONA */
+            margin: 0 auto;       /* ⬅️ WYŚRODKOWANIE */
         }
+
 
         .book-card {
             background: white;
@@ -120,10 +123,12 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .book-image {
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 12px;
+        .book-img {
+        width: 100%;
+        height: 260px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 12px;
         }
 
         .book-title {
@@ -150,6 +155,13 @@
             display: flex;
             gap: 8px;
             flex-direction: column;
+        }
+        .book-genre {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
         }
 
         button {
@@ -205,6 +217,72 @@
         footer a:hover {
             text-decoration: underline;
         }
+        /*kategorie*/
+        .categories {
+        margin-bottom: 30px;
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 10;
+        padding: 10px 0;
+        width: 100%;
+
+        }
+
+        .categories-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        }
+
+.categories-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 16px;   /* ⬅️ kontrolowane odsunięcie */
+  padding-right: 16px;
+}
+                       
+
+.categories-list li {
+  padding: 8px 14px;
+  cursor: pointer;
+  color: #000;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+  border-radius: 6px;        /* ⬅️ prostokąty */
+  background: #fff;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+
+
+.categories-list li:hover {
+  background: #fff3e8;
+  border-color: #ff6a00;
+  color: #ff6a00;
+}
+
+.categories-list li.active {
+  background: #070f5b;
+  border-color: #050f64;
+  color: #fff;
+  font-weight: 500;
+}
+.category-section {
+  margin: 30px auto;
+  max-width: 1200px;
+}
+
+.hidden {
+  display: none;
+}
+        
     </style>
 </head>
 <body>
@@ -225,15 +303,45 @@
 </nav>
 
 <header>
-    <h1>📚 Online Bookstore</h1>
+    <h1>Bookland</h1>
     <p>Discover amazing books and earn loyalty points!</p>
 </header>
 
+<nav class="categories">
+  <ul class="categories-list">
+    <li data-category="All" class="active">All</li>
+    <li data-category="Biography">Biography</li>
+    <li data-category="Programming">Programming</li>
+    <li data-category="Economy">Economy</li>
+    <li data-category="Fantasy">Fantasy</li>
+    <li data-category="Science Fiction">Science Fiction</li>
+    <li data-category="Detective">Detective</li>
+    <li data-category="Drama">Drama</li>
+    <li data-category="Classic Polish literature">Classic Polish literature</li>
+    <li data-category="Dystopian novel">Dystopian novel</li>
+    <li data-category="Essay">Essay</li>
+    <li data-category="For Kids">For Kids</li>
+  </ul>
+</nav>
+
 <main>
-    <h2>Available Books</h2>
+    
+
     <div id="books-container" class="books-grid"></div>
+
+    <section id="categorySection" class="category-section hidden">
+    <h2 id="categoryTitle"></h2>
+    <div id="categoryBooks" class="books-grid"></div>
+    </section>
+    <h2>Explore our books</h2>
+    <div id="books" class="books-grid"></div>
+
     <p id="msg"></p>
 </main>
+
+
+
+
 
 <footer>
     <p>&copy; 2025 Online Bookstore. All rights reserved. | <a href="index.html">Home</a> | <a href="about.html">About</a></p>
@@ -280,7 +388,11 @@
 
             const imageEl = document.createElement("div");
             imageEl.className = "book-image";
-            imageEl.textContent = book.image;
+            const img = document.createElement("img");
+            img.src = book.image;
+            img.alt = book.title;
+            img.className = "book-img";
+            imageEl.appendChild(img);
 
             const titleEl = document.createElement("div");
             titleEl.className = "book-title";
@@ -289,7 +401,11 @@
             const authorEl = document.createElement("div");
             authorEl.className = "book-author";
             authorEl.textContent = "by " + book.author;
-
+            //wyświetlenie gatunków
+            const genreEl = document.createElement("div");
+            genreEl.className = "book-genre";
+            genreEl.textContent = book.genre;
+            //
             const priceEl = document.createElement("div");
             priceEl.className = "book-price";
             priceEl.textContent = book.price.toFixed(2) + " PLN";
@@ -341,6 +457,7 @@
             card.appendChild(imageEl);
             card.appendChild(titleEl);
             card.appendChild(authorEl);
+            card.appendChild(genreEl);
             card.appendChild(priceEl);
             card.appendChild(actionsEl);
 
@@ -354,3 +471,4 @@
 </script>
 </body>
 </html>
+
